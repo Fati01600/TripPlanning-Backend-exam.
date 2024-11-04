@@ -1,0 +1,51 @@
+### Get All Trips
+GET http://localhost:7777/trips
+Accept: application/json
+
+### Get Trip by ID
+GET http://localhost:7777/trips/1
+Accept: application/json
+
+### Filter Trips by Category
+GET http://localhost:7777/trips/category/beach
+Accept: application/json
+
+### Get Total Price Per Guide
+GET http://localhost:7777/trips/guides/totalprice
+Accept: application/json
+
+### Create a New Trip
+POST http://localhost:7777/trips
+Content-Type: application/json
+
+{
+  "title": "New Trip to the Beach",
+  "description": "A relaxing beach getaway",
+  "category": "beach",
+  "price": 500,
+  "guideId": 1
+}
+
+### Update a Trip
+PUT http://localhost:7777/trips/1
+Content-Type: application/json
+
+{
+  "title": "Updated Trip to the Beach",
+  "description": "An updated description for the beach getaway",
+  "category": "beach",
+  "price": 600,
+  "guideId": 1
+}
+
+### Delete a Trip
+DELETE http://localhost:7777/trips/1
+Accept: application/json
+
+### Add a Guide to a Trip
+PUT http://localhost:7777/trips/1/guides/2
+Accept: application/json
+
+### Populate Database (Optional)
+POST http://localhost:7777/trips/populate
+Accept: application/json

@@ -1,0 +1,140 @@
+### A simple get request to the test endpoint. No need for login
+GET {{url}}/auth/test/
+
+### Create a new user - this one will only get a USER role by default
+POST {{url}}/auth/register/
+
+{
+    "username": "jørgen",
+    "password": "jørgen123"
+}
+
+### LOGIN
+POST {{url}}/auth/login/
+Content-Type: application/json
+
+{
+    "username": "jørgen",
+    "password": "jørgen123"
+}
+
+> {%
+    client.global.set("jwt_token", response.body.token);
+    console.log("JWT Token:", client.global.get("jwt_token"));
+%}
+
+###
+GET {{url}}/protected/user_demo/
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+###
+GET {{url}}/protected/admin_demo/
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+### Add admin role to user
+POST {{url}}/auth/user/addrole/
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+    "role": "admin"
+}
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+
+### To access the /users methods, the user must be logged in
+
+GET {{url}}/protected/users
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+###
+
+GET {{url}}/protected/users/Gitte
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+###
+
+
+PUT {{url}}/protected/users/Gitte
+Authorization: Bearer {{jwt_token}}
+Content-Type: application/json
+
+{
+   "username": "Gitte",
+   "password": "nytpassword",
+   "roles" : ["admin"]
+}
+
+
+###
+
+DELETE {{url}}/protected/users/Gitte
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
+
+
+### HTTP REQUESTS FOR PLANTS
+
+GET {{url}}/plants/
+
+###
+
+GET {{url}}/plants/2
+
+### GET PLANTS BY TYPE
+
+GET {{url}}/plants/type?type=rose
+
+###
+
+GET {{url}}/plants/type?type=bush
+
+###
+
+GET {{url}}/plants/type?type=fruitandberries
+
+###
+
+GET {{url}}/plants/type?type=rhododendron
+
+### GET PLANTS BY RESELLER
+
+GET {{url}}/plants/3/plants
+
+### ADD PLANT TO RESELLER
+
+PUT {{url}}/plants/2/6
+
+### FIND PLANTS OF MAX HEIGHT 100
+
+GET {{url}}/plants/max?max=100
+
+### MAP PLANTS BY NAME
+
+GET {{url}}/plants/name
+
+### SORT PLANTS BY NAME
+
+GET {{url}}/plants/sort
+
+### CREATE NEW PLANT
+
+POST {{url}}/plants/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Bluberry",
+  "plantType": "Bush",
+  "maxHeight": 320,
+  "price": 350
+}
+
+
+
+
