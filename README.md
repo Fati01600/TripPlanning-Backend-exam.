@@ -1,11 +1,98 @@
 ## Considerations and explanations
-The purpose of the exercse is to build a system for an e-commerce platform offering trip planning services.
+Denne eksamen handler om at lave et REST API-Applikation, der bruger Javalin og JPA til at håndtere ture og guider for en e-handelsplatform. Der er også teoretiske spørgsmål i opgaven.
+Den indkluderer funtionalitet til CRUD-oprationer for ture og guider, error handling, streams, at hente data fra en ekstern API, test af REST endpoints og sikkerhed med JWT.
 
-### 1.1
-Create a new Java Project for javalin and JPA.
-- To be able to do that  set up a maven project and ncluded the dependences for javalin Hibernate, Jackson for json, and JWT for security.
+### 1.1 Oprettelse af et nyt Java-project til javalin og JPA.
+Projektet er oprettet med følgende afhængigheder I pom.xml:
+- Javalin: Det er framworket vi bruger til at håndtere HTTP-requestene og bygge et RESTful API.
+- Hibernate: Brugt til at kortlægge entiteter, samt håndtere vedvarende data i databasen og I vores tilfælde PostgresSQL. 
+- Jackson: Brugt til at konvertere JSON til Java-objekter og omvendt.
+- SLF4J og Logback: Brugt til at logge information om applikationen.
+- JWT: Brugt til at implementere sikkerhed gennem JSON Web Tokens.
 
-### 2.1 
+  <dependencies>
+    <!-- Javalin framework for REST API -->
+    <dependency>
+        <groupId>io.javalin</groupId>
+        <artifactId>javalin-bundle</artifactId>
+        <version>6.1.3</version>
+    </dependency>
+    <!-- Hibernate og PostgreSQL til databasen -->
+    <dependency>
+        <groupId>org.hibernate.orm</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>6.2.4.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>42.7.4</version>
+    </dependency>
+    <!-- JWT -->
+    <dependency>
+        <groupId>com.github.Hartmannsolution</groupId>
+        <artifactId>TokenSecurity</artifactId>
+        <version>1.0.1</version>
+    </dependency>
+    <!-- SLF4J og Logback til logging -->
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.5.7</version>
+    </dependency>
+</dependencies>
+
+- Implemringerne sikrer at vi kan bruge Javalin til at håndtere HTTP-requestene, Hibernate til at håndtere databasen og JWT til at implementere sikkerhed senere I koden.
+### 1.1 Start Javalin-serveren med JPA-Konfiguration. 
+package dat;
+
+import dat.config.ApplicationConfig;
+
+public class Main {
+public static void main(String[] args) {
+// Task 1.1: Start Javalin-serveren med JPA-konfiguration
+ApplicationConfig.startServer(7777);
+}
+}
+- Denne konfiguration viser, hvordan Javalin serveren er sat op og klar til brug med en konfigureret JPA-database. 
+
+
+### 2.1  Oprettelse af en HibernateConfig-klasse med en metode, der returnerer en EntityManagerFactory ved brug af JPA.
+- Metoden getEntityManagerFactory() i HibernateConfig-klassen opretter en EntityManagerFactory, der bruges til at oprette en EntityManager, som bruges til at udføre CRUD-operationer på databasen.
+- EntityManagerFactory er en del af JPA og bruges til at oprette en EntityManager, som er en interface, der bruges til at udføre CRUD-operationer på databasen.
+
+public class HibernateConfig {
+private static EntityManagerFactory emf;
+
+    public static EntityManagerFactory getEntityManagerFactory() {
+        if (emf == null) {
+            Configuration configuration = new Configuration();
+
+            // Indlæs konfiguration og entiteter her
+            emf = configuration.buildSessionFactory().unwrap(EntityManagerFactory.class);
+        }
+        return emf;
+    }
+}
+
+### 2.2 Implementering af en Trip-entitetsklasse med følgende egenskaber: starttime, endtime, startposition, name, price, id, category. Brug en enum til kategorien for turen.
+@Entity
+public class Trip {
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+private LocalDateTime starttime;
+private LocalDateTime endtime;
+private String startposition;
+private String name;
+private double price;
+@Enumerated(EnumType.STRING)
+private TripCategory category;
+
+    @ManyToOne
+    private Guide guide;
+}
+
 Establish a HibernateConfig class with a method that returns an EntityManagerFactory.
 - The entityMangerFactory is created in HibernateConfig class:
   Consider your problem solving strategy (important)

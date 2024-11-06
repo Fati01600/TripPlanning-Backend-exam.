@@ -4,12 +4,12 @@
 GET http://localhost:7777/api/trips
 Accept: application/json
 
-### Get Trip by ID (virker)
+### Get Trip by ID
 GET http://localhost:7777/api/trips/2
 Accept: application/json
 
 
-### GET Trips by Category (virker)
+### GET Trips by Category
 GET http://localhost:7777/api/trips/category/beach
 Accept: application/json
 

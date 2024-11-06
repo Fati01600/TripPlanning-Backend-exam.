@@ -1,4 +1,3 @@
-// Trip.java
 package dat.entities;
 
 import jakarta.persistence.*;
@@ -19,7 +18,6 @@ public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String startPosition;
@@ -32,7 +30,6 @@ public class Trip {
     @ManyToOne(fetch = FetchType.LAZY)
     private Guide guide;
 
-    // Constructor that accepts TripDTO
     public Trip(TripDTO dto) {
         this.startTime = dto.getStartTime();
         this.endTime = dto.getEndTime();
@@ -42,7 +39,6 @@ public class Trip {
         this.category = dto.getCategory();
     }
 
-    // Full constructor with fields
     public Trip(LocalDateTime startTime, LocalDateTime endTime, String startPosition, String name, double price, TripCategory category, Guide guide) {
         this.startTime = startTime;
         this.endTime = endTime;
@@ -51,17 +47,5 @@ public class Trip {
         this.price = price;
         this.category = category;
         this.guide = guide;
-    }
-
-    public LocalDateTime getStarttime() {
-        return startTime;
-    }
-
-    public LocalDateTime getEndtime() {
-        return endTime;
-    }
-
-    public String getStartposition() {
-        return startPosition;
     }
 }

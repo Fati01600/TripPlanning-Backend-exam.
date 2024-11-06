@@ -9,7 +9,7 @@ import jakarta.persistence.EntityManagerFactory;
 
 import java.time.LocalDateTime;
 
-
+//Opretter test og demodata i databasen så man ikke manuel skal oprette det hver gang. Super effektiv
 public class Populate {
     public static void main(String[] args) {
 
@@ -41,9 +41,9 @@ public class Populate {
             em.persist(u4);
 
             // Create sample Guides
-            Guide guide1 = new Guide("Alice", "Smith", "alice@example.com", "12345678", 5);
-            Guide guide2 = new Guide("Bob", "Johnson", "bob@example.com", "87654321", 8);
-            Guide guide3 = new Guide("Clara", "Lee", "clara@example.com", "99887766", 3);
+            Guide guide1 = new Guide("Fatima", "Majid", "Fati@example.com", "42954678", 5);
+            Guide guide2 = new Guide("Jon", "Bertelsen", "Jon@example.com", "42395824", 8);
+            Guide guide3 = new Guide("Samira", "Shamcizadh", "Samira@example.com", "42484024", 3);
 
             em.persist(guide1);
             em.persist(guide2);
