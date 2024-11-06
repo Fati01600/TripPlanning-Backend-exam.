@@ -3,10 +3,12 @@ package dat.daos;
 import dat.dtos.TripDTO;
 import dat.entities.Guide;
 import dat.entities.Trip;
+import dat.enums.TripCategory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,21 +24,20 @@ public class TripDAO extends ITripGuideDAO implements IDAO<TripDTO, Integer> {
     @Override
     public TripDTO create(TripDTO dto) {
         EntityManager em = emf.createEntityManager();
-        Trip trip = new Trip(dto); // Assuming Trip has a constructor that accepts TripDTO
+        Trip trip = new Trip(dto);
         try {
             em.getTransaction().begin();
             em.persist(trip);
             em.getTransaction().commit();
-            return new TripDTO();
+            return new TripDTO(trip);
         } catch (Exception e) {
-            em.getTransaction().rollback(); // Ruller transaktionen tilbage ved fejl
+            em.getTransaction().rollback();
             throw new RuntimeException("Error creating Trip", e);
         } finally {
             em.close();
         }
     }
 
-    @Override
     public List<TripDTO> getAll() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -45,6 +46,37 @@ public class TripDAO extends ITripGuideDAO implements IDAO<TripDTO, Integer> {
             return trips.stream().map(TripDTO::new).collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving all trips", e);
+        } finally {
+            em.close();
+        }
+    }
+
+
+    // Add the populateDatabase method
+    public void populateDatabase() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            // Sample data
+            Guide guide1 = new Guide("Alice", "Johnson", "alice@example.com", "12345678", 5);
+            Guide guide2 = new Guide("Bob", "Smith", "bob@example.com", "87654321", 10);
+
+            Trip trip1 = new Trip(LocalDateTime.now(), LocalDateTime.now().plusDays(1), "Mountain Base", "Mountain Adventure", 200.0, TripCategory.MOUNTAIN, guide1);
+            Trip trip2 = new Trip(LocalDateTime.now(), LocalDateTime.now().plusDays(2), "Beach", "Beach Relaxation", 150.0, TripCategory.BEACH, guide2);
+
+            // Persist guides first if they're not already managed entities
+            em.persist(guide1);
+            em.persist(guide2);
+
+            // Persist trips
+            em.persist(trip1);
+            em.persist(trip2);
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new RuntimeException("Error populating database with sample data", e);
         } finally {
             em.close();
         }
@@ -63,6 +95,7 @@ public class TripDAO extends ITripGuideDAO implements IDAO<TripDTO, Integer> {
         }
     }
 
+
     @Override
     public TripDTO update(Integer id, TripDTO dto) {
         EntityManager em = emf.createEntityManager();
@@ -77,7 +110,7 @@ public class TripDAO extends ITripGuideDAO implements IDAO<TripDTO, Integer> {
                 trip.setPrice(dto.getPrice());
                 trip.setCategory(dto.getCategory());
                 em.getTransaction().commit();
-                return new TripDTO();
+                return new TripDTO(trip);
             }
             return null;
         } catch (Exception e) {
@@ -108,9 +141,9 @@ public class TripDAO extends ITripGuideDAO implements IDAO<TripDTO, Integer> {
         }
     }
 
-
-
-    @Override
+    /**
+     * Adds a guide to a specific trip.
+     */
     public void addGuideToTrip(int tripId, int guideId) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -118,22 +151,22 @@ public class TripDAO extends ITripGuideDAO implements IDAO<TripDTO, Integer> {
             Trip trip = em.find(Trip.class, tripId);
             Guide guide = em.find(Guide.class, guideId);
             if (trip != null && guide != null) {
-                trip.setGuide(guide); // Tilføj guiden til turen
-                em.merge(trip); // Opdater turen med ny guide
+                trip.setGuide(guide); // Set the guide to the trip
+                em.merge(trip); // Persist the changes
                 em.getTransaction().commit();
             } else {
-                em.getTransaction().rollback();
                 throw new RuntimeException("Guide or Trip not found");
             }
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new RuntimeException("Error adding Guide to Trip", e);
         } finally {
             em.close();
         }
     }
 
-    @Override
     public Set<TripDTO> getTripsByGuide(int guideId) {
         EntityManager em = emf.createEntityManager();
         try {
